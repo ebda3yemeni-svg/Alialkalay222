@@ -1,0 +1,66 @@
+@import "tailwindcss";
+
+@layer base {
+  html, body {
+    overscroll-behavior-y: contain;
+  }
+  body {
+    font-family: 'Noto Kufi Arabic', 'Cairo', sans-serif;
+    background-color: #F7F5F2;
+    color: #1A2A40;
+  }
+
+  h1, h2, h3, .font-amiri, .arabic-serif {
+    font-family: 'Amiri', serif;
+  }
+
+  .font-kufi, .arabic-kufi {
+    font-family: 'Noto Kufi Arabic', 'Cairo', sans-serif;
+  }
+}
+
+.glass-card {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(197, 160, 89, 0.3);
+}
+
+.navy-gradient {
+  background: linear-gradient(135deg, #1A2A40 0%, #243B55 100%);
+}
+
+.gold-gradient {
+  background: linear-gradient(135deg, #C5A059 0%, #D4B16A 100%);
+}
+
+/* Custom scrollbar for family tree canvas */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #F0EBE0;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #C5A059;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #A8823E;
+}
+
+/* Family tree lines */
+.tree-line {
+  stroke: #C5A059;
+  stroke-width: 2;
+}
+
+/* Print export helper */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+}

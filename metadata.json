@@ -1,0 +1,6 @@
+{
+  "name": "موسوعة الأنساب لبني علي الكلعي",
+  "description": "منصة احترافية لتوثيق وإدارة واستكشاف شجرة العائلة وسلسلة الأنساب لبني علي الكلعي",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
