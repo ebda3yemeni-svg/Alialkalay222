@@ -3,18 +3,22 @@ workflows:
     name: Android App Build
     max_build_duration: 60
     instance_type: mac_mini_m1
+
     environment:
       vars:
         VITE_API_BASE_URL: "https://service-9582.ai.studio"
       node: 20
       java: 21
+
     scripts:
       - name: Install dependencies
         script: |
           npm install
+
       - name: Build Web Assets
         script: |
           npm run build
+
       - name: Setup Capacitor & Android Platform
         script: |
           if [ ! -d "android" ]; then
@@ -24,12 +28,20 @@ workflows:
           else
             npx cap copy android
           fi
+
           npx cap sync android
+
+      - name: Verify Java Version
+        script: |
+          java -version
+          echo $JAVA_HOME
+
       - name: Build Android APK
         script: |
           cd android
           chmod +x gradlew
           ./gradlew assembleDebug
+
     artifacts:
       - android/app/build/outputs/**/*.apk
       - android/app/build/outputs/**/*.aab
