@@ -7,7 +7,7 @@ workflows:
       vars:
         VITE_API_BASE_URL: "https://service-9582.ai.studio"
       node: 20
-      java: 17
+      java: 21
     scripts:
       - name: Install dependencies
         script: |
