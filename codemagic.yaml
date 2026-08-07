@@ -1,51 +1,47 @@
 workflows:
   android-workflow:
-    name: Android App Build
+    name: Mayar Genealogy Android
     max_build_duration: 60
     instance_type: mac_mini_m1
 
     environment:
-      node: 20
+      node: 22
       java: 17
       vars:
         VITE_API_BASE_URL: "https://service-9582.ai.studio"
 
     scripts:
 
-      - name: Install dependencies
+      - name: Install packages
         script: |
           npm install
 
-      - name: Build Web Assets
+      - name: Build web
         script: |
           npm run build
 
-      - name: Setup Capacitor
+      - name: Prepare Capacitor
         script: |
-          npm install @capacitor/cli @capacitor/core @capacitor/android
+          npm install @capacitor/android @capacitor/cli
 
-          if [ ! -d "android" ]; then
-            npx cap add android
-          fi
+          npx cap init "Mayar Genealogy" "com.mayar.genealogy" --web-dir dist || true
+
+          npx cap add android || true
 
           npx cap sync android
 
-      - name: Fix Android Build
+
+      - name: Fix Kotlin conflict
         script: |
           cd android
-
-          echo "kotlin.code.style=official" >> gradle.properties
-
           ./gradlew clean
+          cd ..
 
-      - name: Build Android APK
+      - name: Build APK
         script: |
           cd android
-
           chmod +x gradlew
-
-          ./gradlew assembleDebug --no-daemon --refresh-dependencies
+          ./gradlew assembleDebug
 
     artifacts:
       - android/app/build/outputs/**/*.apk
-      - android/app/build/outputs/**/*.aab
