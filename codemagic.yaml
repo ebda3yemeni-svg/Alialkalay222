@@ -23,17 +23,27 @@ workflows:
       - name: Setup Capacitor
         script: |
           npm install @capacitor/cli @capacitor/core @capacitor/android
+
+          if [ ! -d "android" ]; then
+            npx cap add android
+          fi
+
           npx cap sync android
 
-      - name: Fix Gradle Kotlin
+      - name: Fix Android Build
         script: |
           cd android
+
+          echo "kotlin.code.style=official" >> gradle.properties
+
           ./gradlew clean
 
       - name: Build Android APK
         script: |
           cd android
+
           chmod +x gradlew
+
           ./gradlew assembleDebug --no-daemon --refresh-dependencies
 
     artifacts:
