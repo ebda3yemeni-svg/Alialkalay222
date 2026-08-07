@@ -14,11 +14,15 @@ workflows:
 
       - name: Install Capacitor CLI
         script: |
-          npm install @capacitor/cli --save-dev
+          npm install @capacitor/cli @capacitor/android --save-dev
 
       - name: Build web app
         script: |
           npm run build
+
+      - name: Add Android platform
+        script: |
+          npx cap add android || true
 
       - name: Capacitor sync
         script: |
