@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { GenealogyStatistics } from '../types.ts';
+import { API_BASE_URL } from '../config.ts';
 import {
   BarChart3,
   Users,
@@ -36,7 +37,7 @@ export const StatisticsView: React.FC = () => {
   const fetchStats = async () => {
     try {
       setLoading(true);
-      const res = await fetch('/api/statistics');
+      const res = await fetch(`${API_BASE_URL}/api/statistics`);
       if (res.ok) {
         const data = await res.json();
         setStats(data);

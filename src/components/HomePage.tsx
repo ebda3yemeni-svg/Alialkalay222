@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Person, GenealogyStatistics } from '../types.ts';
 import { Search, TreePine, UserPlus, BarChart3, Info, Users, Sparkles, BookOpen, Layers, Award, ArrowLeft } from 'lucide-react';
 import { useAuth } from '../context/AuthContext.tsx';
+import { API_BASE_URL } from '../config.ts';
 
 interface HomePageProps {
   setActiveTab: (tab: string) => void;
@@ -21,7 +22,7 @@ export const HomePage: React.FC<HomePageProps> = ({
   const [stats, setStats] = useState<GenealogyStatistics | null>(null);
 
   const loadStats = () => {
-    fetch('/api/statistics')
+    fetch(`${API_BASE_URL}/api/statistics`)
       .then((res) => res.json())
       .then((data) => setStats(data))
       .catch((err) => console.error('Failed to load stats:', err));
@@ -33,7 +34,7 @@ export const HomePage: React.FC<HomePageProps> = ({
     const handleDataUpdate = () => {
       loadStats();
       if (searchQuery.trim()) {
-        fetch(`/api/people?search=${encodeURIComponent(searchQuery.trim())}&limit=8`)
+        fetch(`${API_BASE_URL}/api/people?search=${encodeURIComponent(searchQuery.trim())}&limit=8`)
           .then((res) => res.json())
           .then((data) => setSearchResults(data))
           .catch((err) => console.error('Search error:', err));
@@ -56,7 +57,7 @@ export const HomePage: React.FC<HomePageProps> = ({
 
     const timer = setTimeout(() => {
       setIsSearching(true);
-      fetch(`/api/people?search=${encodeURIComponent(searchQuery.trim())}&limit=8`)
+      fetch(`${API_BASE_URL}/api/people?search=${encodeURIComponent(searchQuery.trim())}&limit=8`)
         .then((res) => res.json())
         .then((data) => setSearchResults(data))
         .catch((err) => console.error('Search error:', err))

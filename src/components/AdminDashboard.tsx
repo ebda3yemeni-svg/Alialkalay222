@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Person, AuditLogItem, AppUser } from '../types.ts';
 import { useAuth } from '../context/AuthContext.tsx';
+import { API_BASE_URL } from '../config.ts';
 import { processImageFile } from '../lib/imageUtils.ts';
 import {
   LayoutDashboard,
@@ -99,7 +100,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
       setRestoreError('');
       setRestoreSuccess('');
 
-      const res = await fetch('/api/export/json');
+      const res = await fetch(`${API_BASE_URL}/api/export/json`);
       if (!res.ok) {
         throw new Error('فشل في تصدير النسخة الاحتياطية من الخادم');
       }
@@ -186,7 +187,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
       setIsRestoring(true);
       setRestoreError('');
 
-      const res = await fetch('/api/import/json', {
+      const res = await fetch(`${API_BASE_URL}/api/import/json`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -245,7 +246,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
   const fetchPeople = async () => {
     try {
       setLoading(true);
-      const res = await fetch('/api/people?limit=500');
+      const res = await fetch(`${API_BASE_URL}/api/people?limit=500`);
       if (res.ok) {
         const data = await res.json();
         setPeople(data);
@@ -259,7 +260,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
 
   const fetchAuditLogs = async () => {
     try {
-      const res = await fetch('/api/audit-logs', {
+      const res = await fetch(`${API_BASE_URL}/api/audit-logs`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       if (res.ok) {
@@ -273,7 +274,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
 
   const fetchUsers = async () => {
     try {
-      const res = await fetch('/api/users', {
+      const res = await fetch(`${API_BASE_URL}/api/users`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       if (res.ok) {
@@ -289,7 +290,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
     if (!confirm(`هل أنت متأكد من حذف السجل الخاص بـ (${name}) دائمياً من قاعدة البيانات؟`)) return;
 
     try {
-      const res = await fetch(`/api/people/${id}`, {
+      const res = await fetch(`${API_BASE_URL}/api/people/${id}`, {
         method: 'DELETE',
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -312,7 +313,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
 
   const handleUpdateRole = async (userId: number, role: string, isActive?: boolean) => {
     try {
-      const res = await fetch(`/api/users/${userId}/role`, {
+      const res = await fetch(`${API_BASE_URL}/api/users/${userId}/role`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -333,7 +334,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
 
   const handleToggleUserStatus = async (userId: number, currentActiveState: boolean) => {
     try {
-      const res = await fetch(`/api/users/${userId}/status`, {
+      const res = await fetch(`${API_BASE_URL}/api/users/${userId}/status`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -358,7 +359,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
       return;
     }
     try {
-      const res = await fetch(`/api/users/${userId}`, {
+      const res = await fetch(`${API_BASE_URL}/api/users/${userId}`, {
         method: 'DELETE',
         headers: {
           Authorization: `Bearer ${token}`,
@@ -395,7 +396,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
 
     setAddingAdmin(true);
     try {
-      const res = await fetch('/api/users/add-by-email', {
+      const res = await fetch(`${API_BASE_URL}/api/users/add-by-email`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -435,7 +436,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
     if (!selectedPersonId || !photoUrl) return;
 
     try {
-      const res = await fetch('/api/photos', {
+      const res = await fetch(`${API_BASE_URL}/api/photos`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -458,7 +459,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
     if (!selectedPersonId || !docTitle || !docUrl) return;
 
     try {
-      const res = await fetch('/api/documents', {
+      const res = await fetch(`${API_BASE_URL}/api/documents`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -1247,7 +1248,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
             {/* Standard Exports */}
             <div className="pt-3 border-t border-amber-100 flex flex-wrap gap-3">
               <a
-                href="/api/export/gedcom"
+                href={`${API_BASE_URL}/api/export/gedcom`}
                 download
                 className="px-4 py-2.5 rounded-xl bg-stone-100 hover:bg-stone-200 text-stone-800 font-bold text-xs flex items-center gap-2 transition-colors"
               >

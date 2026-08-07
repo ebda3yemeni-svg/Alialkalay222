@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { API_BASE_URL } from '../config.ts';
 import {
   GitCompare,
   Search,
@@ -99,7 +100,7 @@ export const RelationshipComparator: React.FC<RelationshipComparatorProps> = ({
       setLoading(true);
       setError(null);
       try {
-        const res = await fetch(`/api/people/compare?p1=${person1Id}&p2=${person2Id}`);
+        const res = await fetch(`${API_BASE_URL}/api/people/compare?p1=${person1Id}&p2=${person2Id}`);
         if (!res.ok) {
           const errData = await res.json();
           throw new Error(errData.error || 'أحد الشخصين المحددين غير موجود أو لا توجد صلة قرابة مسجلة');

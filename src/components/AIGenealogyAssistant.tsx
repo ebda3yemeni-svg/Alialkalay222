@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Bot, Send, Sparkles, UserCheck, AlertTriangle, GitBranch, RefreshCw, User, ShieldAlert, CheckCircle2, ChevronLeft, ExternalLink, HelpCircle, ArrowRight, X } from 'lucide-react';
 import { useAuth } from '../context/AuthContext.tsx';
+import { API_BASE_URL } from '../config.ts';
 import { Person } from '../types.ts';
 
 interface Message {
@@ -85,7 +86,7 @@ export const AIGenealogyAssistant: React.FC<AIGenealogyAssistantProps> = ({
   const fetchAdminSuggestions = async () => {
     setLoadingSuggestions(true);
     try {
-      const res = await fetch('/api/ai/admin-suggestions');
+      const res = await fetch(`${API_BASE_URL}/api/ai/admin-suggestions`);
       const data = await res.json();
       if (data.suggestions && Array.isArray(data.suggestions)) {
         setSuggestions(data.suggestions);
@@ -121,7 +122,7 @@ export const AIGenealogyAssistant: React.FC<AIGenealogyAssistantProps> = ({
           text: m.text,
         }));
 
-      const response = await fetch('/api/ai/genealogy-chat', {
+      const response = await fetch(`${API_BASE_URL}/api/ai/genealogy-chat`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ prompt: query, history }),

@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Person, MergeSuggestion } from '../types.ts';
 import { useAuth } from '../context/AuthContext.tsx';
+import { API_BASE_URL } from '../config.ts';
 import { X, UserPlus, Search, AlertTriangle, Check, ArrowRight, UserCheck, Camera, Upload, Trash2, Image as ImageIcon, Link as LinkIcon } from 'lucide-react';
 import { processImageFile } from '../lib/imageUtils.ts';
 
@@ -62,7 +63,7 @@ export const AddPersonModal: React.FC<AddPersonModalProps> = ({
   // Fetch father details if editing existing person with fatherId
   useEffect(() => {
     if (editPerson?.fatherId) {
-      fetch(`/api/people/${editPerson.fatherId}`)
+      fetch(`${API_BASE_URL}/api/people/${editPerson.fatherId}`)
         .then((res) => res.json())
         .then((fatherData: Person) => {
           if (fatherData && fatherData.id) {
@@ -82,7 +83,7 @@ export const AddPersonModal: React.FC<AddPersonModalProps> = ({
     }
 
     const timer = setTimeout(() => {
-      fetch(`/api/people?search=${encodeURIComponent(fatherSearchTerm.trim())}&limit=10`)
+      fetch(`${API_BASE_URL}/api/people?search=${encodeURIComponent(fatherSearchTerm.trim())}&limit=10`)
         .then((res) => res.json())
         .then((data: Person[]) => {
           // Filter to males
@@ -98,7 +99,7 @@ export const AddPersonModal: React.FC<AddPersonModalProps> = ({
   useEffect(() => {
     if (fullName.trim().length > 4) {
       const timer = setTimeout(() => {
-        fetch('/api/duplicates/check', {
+        fetch(`${API_BASE_URL}/api/duplicates/check`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -152,7 +153,7 @@ export const AddPersonModal: React.FC<AddPersonModalProps> = ({
         notes: notes.trim() || null,
       };
 
-      const url = editPerson ? `/api/people/${editPerson.id}` : '/api/people';
+      const url = editPerson ? `${API_BASE_URL}/api/people/${editPerson.id}` : `${API_BASE_URL}/api/people`;
       const method = editPerson ? 'PUT' : 'POST';
 
       const res = await fetch(url, {

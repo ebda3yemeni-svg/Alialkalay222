@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { API_BASE_URL } from '../config.ts';
 import {
   ShieldAlert,
   AlertTriangle,
@@ -65,7 +66,7 @@ export const GenealogyValidationReport: React.FC<GenealogyValidationReportProps>
     try {
       setLoading(true);
       setError(null);
-      const res = await fetch('/api/admin/data-review', {
+      const res = await fetch(`${API_BASE_URL}/api/admin/data-review`, {
         headers: token ? { Authorization: `Bearer ${token}` } : {},
       });
 
@@ -91,7 +92,7 @@ export const GenealogyValidationReport: React.FC<GenealogyValidationReportProps>
   const handleApproveDifferent = async (warning: FourPartDuplicateWarning) => {
     try {
       setApprovingPairKey(warning.pairKey);
-      const res = await fetch('/api/admin/duplicate-reviews/approve', {
+      const res = await fetch(`${API_BASE_URL}/api/admin/duplicate-reviews/approve`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -143,7 +144,7 @@ export const GenealogyValidationReport: React.FC<GenealogyValidationReportProps>
       setMerging(true);
       setMergeError(null);
 
-      const res = await fetch('/api/admin/merge-people', {
+      const res = await fetch(`${API_BASE_URL}/api/admin/merge-people`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -187,7 +188,7 @@ export const GenealogyValidationReport: React.FC<GenealogyValidationReportProps>
   // Handle Change Verification Status (confidenceLevel)
   const handleChangeVerificationStatus = async (personId: number, status: 'verified' | 'unverified' | 'review') => {
     try {
-      const res = await fetch(`/api/people/${personId}/verification-status`, {
+      const res = await fetch(`${API_BASE_URL}/api/people/${personId}/verification-status`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

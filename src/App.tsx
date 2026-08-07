@@ -16,6 +16,7 @@ import { GlobalPullToRefresh } from './components/GlobalPullToRefresh.tsx';
 import { Person } from './types.ts';
 import { TreePine, UserPlus, Bot } from 'lucide-react';
 import { updateSEO } from './utils/seo.ts';
+import { API_BASE_URL } from './config.ts';
 
 function AppContent() {
   const { isAdmin } = useAuth();
@@ -45,7 +46,7 @@ function AppContent() {
     if (p2Param) setComparePerson2Id(parseInt(p2Param));
 
     // Fetch all people for comparison dropdown lists
-    fetch('/api/people?limit=1000')
+    fetch(`${API_BASE_URL}/api/people?limit=1000`)
       .then((res) => res.json())
       .then((data) => {
         if (Array.isArray(data)) setAllPeople(data);

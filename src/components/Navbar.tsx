@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext.tsx';
+import { API_BASE_URL } from '../config.ts';
 import { TreePine, Search, BarChart3, Info, Shield, LogIn, LogOut, LayoutDashboard, Home, GitCompare, Bot, Bell } from 'lucide-react';
 
 interface NavbarProps {
@@ -17,7 +18,7 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, setActiveTab, openNot
     if (isAdmin) {
       const headers: Record<string, string> = {};
       if (token) headers['Authorization'] = `Bearer ${token}`;
-      fetch('/api/admin/notifications', { headers })
+      fetch(`${API_BASE_URL}/api/admin/notifications`, { headers })
         .then((res) => res.json())
         .then((data) => {
           if (Array.isArray(data)) {

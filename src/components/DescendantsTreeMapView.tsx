@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { FamilyTreeNode } from '../types.ts';
+import { API_BASE_URL } from '../config.ts';
 import {
   GitCommit,
   ZoomIn,
@@ -164,7 +165,7 @@ export const DescendantsTreeMapView: React.FC<DescendantsTreeMapViewProps> = ({
     try {
       setLoading(true);
       setError(null);
-      const res = await fetch(`/api/people/${id}/descendants`);
+      const res = await fetch(`${API_BASE_URL}/api/people/${id}/descendants`);
       if (!res.ok) throw new Error('فشل جلب شجرة الذرية لهذا الشخص');
       const data: FamilyTreeNode = await res.json();
       setTreeData(data);

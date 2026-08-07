@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Person } from '../types.ts';
+import { API_BASE_URL } from '../config.ts';
 import { Search, Filter, Users, User, ArrowLeft, RefreshCw, Layers } from 'lucide-react';
 import { VoiceSearchButton } from './VoiceSearchButton.tsx';
 
@@ -38,7 +39,7 @@ export const SearchAndDirectory: React.FC<SearchAndDirectoryProps> = ({ onSelect
   const fetchPeople = async () => {
     try {
       setLoading(true);
-      let url = `/api/people?limit=100000`;
+      let url = `${API_BASE_URL}/api/people?limit=100000`;
       if (searchTerm.trim()) url += `&search=${encodeURIComponent(searchTerm.trim())}`;
       if (selectedTribe.trim()) url += `&tribe=${encodeURIComponent(selectedTribe.trim())}`;
 

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { AdminNotification } from '../types.ts';
 import { useAuth } from '../context/AuthContext.tsx';
+import { API_BASE_URL } from '../config.ts';
 import {
   Bell,
   X,
@@ -53,7 +54,7 @@ export const AdminNotificationCenter: React.FC<AdminNotificationCenterProps> = (
       if (token) {
         headers['Authorization'] = `Bearer ${token}`;
       }
-      const res = await fetch('/api/admin/notifications', { headers });
+      const res = await fetch(`${API_BASE_URL}/api/admin/notifications`, { headers });
       if (res.ok) {
         const data = await res.json();
         if (Array.isArray(data)) {
@@ -78,7 +79,7 @@ export const AdminNotificationCenter: React.FC<AdminNotificationCenterProps> = (
       );
       const headers: Record<string, string> = { 'Content-Type': 'application/json' };
       if (token) headers['Authorization'] = `Bearer ${token}`;
-      await fetch(`/api/admin/notifications/${id}/read`, {
+      await fetch(`${API_BASE_URL}/api/admin/notifications/${id}/read`, {
         method: 'PUT',
         headers,
       });
@@ -93,7 +94,7 @@ export const AdminNotificationCenter: React.FC<AdminNotificationCenterProps> = (
       setNotifications((prev) => prev.map((n) => ({ ...n, isRead: true })));
       const headers: Record<string, string> = { 'Content-Type': 'application/json' };
       if (token) headers['Authorization'] = `Bearer ${token}`;
-      await fetch('/api/admin/notifications/read-all', {
+      await fetch(`${API_BASE_URL}/api/admin/notifications/read-all`, {
         method: 'PUT',
         headers,
       });
@@ -108,7 +109,7 @@ export const AdminNotificationCenter: React.FC<AdminNotificationCenterProps> = (
       setNotifications((prev) => prev.filter((n) => n.id !== id));
       const headers: Record<string, string> = {};
       if (token) headers['Authorization'] = `Bearer ${token}`;
-      await fetch(`/api/admin/notifications/${id}`, {
+      await fetch(`${API_BASE_URL}/api/admin/notifications/${id}`, {
         method: 'DELETE',
         headers,
       });
@@ -124,7 +125,7 @@ export const AdminNotificationCenter: React.FC<AdminNotificationCenterProps> = (
       setNotifications([]);
       const headers: Record<string, string> = {};
       if (token) headers['Authorization'] = `Bearer ${token}`;
-      await fetch('/api/admin/notifications', {
+      await fetch(`${API_BASE_URL}/api/admin/notifications`, {
         method: 'DELETE',
         headers,
       });

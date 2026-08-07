@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { PersonDetail, Person } from '../types.ts';
 import { useAuth } from '../context/AuthContext.tsx';
 import { updateSEO } from '../utils/seo.ts';
+import { API_BASE_URL } from '../config.ts';
 import { DescendantsTreeMapView } from './DescendantsTreeMapView.tsx';
 import {
   X,
@@ -60,7 +61,7 @@ export const PersonProfileModal: React.FC<PersonProfileModalProps> = ({
       if (token) {
         headers['Authorization'] = `Bearer ${token}`;
       }
-      const res = await fetch(`/api/people/${detail.person.id}/confidence`, {
+      const res = await fetch(`${API_BASE_URL}/api/people/${detail.person.id}/confidence`, {
         method: 'PUT',
         headers,
         body: JSON.stringify({ confidenceLevel: level }),
@@ -93,7 +94,7 @@ export const PersonProfileModal: React.FC<PersonProfileModalProps> = ({
     if (!confirm(`هل أنت متأكد من حذف السجل الخاص بـ (${name}) نهائياً من قاعدة البيانات؟`)) return;
 
     try {
-      const res = await fetch(`/api/people/${detail.person.id}`, {
+      const res = await fetch(`${API_BASE_URL}/api/people/${detail.person.id}`, {
         method: 'DELETE',
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -179,7 +180,7 @@ export const PersonProfileModal: React.FC<PersonProfileModalProps> = ({
     try {
       setLoading(true);
       setError(null);
-      const res = await fetch(`/api/people/${id}`);
+      const res = await fetch(`${API_BASE_URL}/api/people/${id}`);
       if (!res.ok) throw new Error('فشل جلب بيانات الملف الشخصي');
       const data = await res.json();
       setDetail(data);

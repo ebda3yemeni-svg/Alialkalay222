@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { FamilyTreeNode } from '../types.ts';
+import { API_BASE_URL } from '../config.ts';
 import { normalizeArabicText } from '../utils/search.ts';
 import {
   ZoomIn,
@@ -360,7 +361,7 @@ export const FamilyTreeViewer: React.FC<FamilyTreeViewerProps> = ({
   const fetchTree = async () => {
     try {
       setLoading(true);
-      const res = await fetch('/api/tree');
+      const res = await fetch(`${API_BASE_URL}/api/tree`);
       if (!res.ok) throw new Error('فشل تحميل شجرة العائلة من الخادم');
       const data = await res.json();
       setTreeData(data);
