@@ -12,6 +12,10 @@ workflows:
         script: |
           npm install
 
+      - name: Install Capacitor CLI
+        script: |
+          npm install @capacitor/cli --save-dev
+
       - name: Build web app
         script: |
           npm run build
@@ -23,6 +27,7 @@ workflows:
       - name: Build Android APK
         script: |
           cd android
+          chmod +x gradlew
           ./gradlew assembleDebug
 
     artifacts:
