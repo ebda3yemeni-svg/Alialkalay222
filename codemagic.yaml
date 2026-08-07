@@ -22,31 +22,20 @@ workflows:
 
       - name: Setup Capacitor
         script: |
-          if [ ! -d "android" ]; then
-            npx cap add android
-          fi
-
+          npm install @capacitor/cli @capacitor/core @capacitor/android
           npx cap sync android
 
-      - name: Fix Kotlin Versions
+      - name: Fix Gradle Kotlin
         script: |
           cd android
-          echo '
-          allprojects {
-              configurations.all {
-                  resolutionStrategy {
-                      force "org.jetbrains.kotlin:kotlin-stdlib:1.8.22"
-                      force "org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.8.22"
-                      force "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.8.22"
-                  }
-              }
-          }' >> build.gradle
+          ./gradlew clean
 
       - name: Build Android APK
         script: |
           cd android
           chmod +x gradlew
-          ./gradlew assembleDebug
+          ./gradlew assembleDebug --no-daemon --refresh-dependencies
 
     artifacts:
       - android/app/build/outputs/**/*.apk
+      - android/app/build/outputs/**/*.aab
