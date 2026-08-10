@@ -17,12 +17,10 @@ workflows:
           npm run build
       - name: Setup Capacitor & Android Platform
         script: |
+          npm install
+          npx cap --version
           if [ ! -d "android" ]; then
-            npm install @capacitor/core @capacitor/cli @capacitor/android
-            npx cap init "Genealogy App" "com.mayar.app" --web-dir dist
             npx cap add android
-          else
-            npx cap copy android
           fi
           npx cap sync android
       - name: Fix Kotlin Dependency Conflicts
