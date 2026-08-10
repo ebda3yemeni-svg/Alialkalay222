@@ -37,47 +37,23 @@ async function startServer() {
   app.use((req, res, next) => {
     const origin = req.headers.origin;
 
-    const allowedOrigins = [
-      'https://localhost',
-      'http://localhost',
-      'capacitor://localhost',
-      'http://localhost:3000',
-      'https://localhost:3000',
-      'android-app://com.genealogy.app',
-      'android-app://com.mayar.app',
-      'file://',
-      'null',
-    ];
-
-    const isAllowedOrigin =
-      !origin ||
-      allowedOrigins.includes(origin) ||
-      origin.startsWith('http://localhost') ||
-      origin.startsWith('https://localhost') ||
-      origin.startsWith('capacitor://') ||
-      origin.startsWith('android-app://') ||
-      origin.endsWith('.ai.studio') ||
-      origin.endsWith('.run.app');
-
-    if (isAllowedOrigin) {
-      if (origin) {
-        res.header('Access-Control-Allow-Origin', origin);
-        res.header('Vary', 'Origin');
-      } else {
-        res.header('Access-Control-Allow-Origin', '*');
-      }
-
-      res.header('Access-Control-Allow-Credentials', 'true');
-      res.header(
-        'Access-Control-Allow-Methods',
-        'GET, POST, PUT, PATCH, DELETE, OPTIONS'
-      );
-      res.header(
-        'Access-Control-Allow-Headers',
-        'Content-Type, Authorization, Accept, X-Requested-With, Cache-Control, Pragma'
-      );
-      res.header('Access-Control-Max-Age', '86400');
+    if (origin) {
+      res.header('Access-Control-Allow-Origin', origin);
+      res.header('Vary', 'Origin');
+    } else {
+      res.header('Access-Control-Allow-Origin', '*');
     }
+
+    res.header('Access-Control-Allow-Credentials', 'true');
+    res.header(
+      'Access-Control-Allow-Methods',
+      'GET, POST, PUT, PATCH, DELETE, OPTIONS'
+    );
+    res.header(
+      'Access-Control-Allow-Headers',
+      'Content-Type, Authorization, Accept, X-Requested-With, Cache-Control, Pragma'
+    );
+    res.header('Access-Control-Max-Age', '86400');
 
     if (req.method === 'OPTIONS') {
       return res.sendStatus(204);
