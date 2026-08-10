@@ -7,7 +7,7 @@ workflows:
       vars:
         VITE_API_BASE_URL: "https://service-9582.ai.studio"
       node: 20
-      java: 17
+      java: 21
     scripts:
       - name: Install dependencies
         script: |
@@ -25,8 +25,19 @@ workflows:
             npx cap copy android
           fi
           npx cap sync android
+      - name: Verify Java and Gradle Environment
+        script: |
+          export JAVA_HOME=$(/usr/libexec/java_home -v 21)
+          export PATH="$JAVA_HOME/bin:$PATH"
+          java -version
+          javac -version
+          cd android
+          chmod +x gradlew
+          ./gradlew --version
       - name: Build Android APK
         script: |
+          export JAVA_HOME=$(/usr/libexec/java_home -v 21)
+          export PATH="$JAVA_HOME/bin:$PATH"
           cd android
           chmod +x gradlew
           ./gradlew assembleDebug
