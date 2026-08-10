@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { User, signInWithPopup, signOut, onAuthStateChanged } from 'firebase/auth';
+import { User, signInWithPopup, signInWithRedirect, getRedirectResult, signOut, onAuthStateChanged } from 'firebase/auth';
 import { auth, googleAuthProvider } from '../lib/firebase.ts';
 import { API_BASE_URL } from '../config.ts';
 import { AppUser } from '../types.ts';
@@ -45,6 +45,19 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   useEffect(() => {
+    getRedirectResult(auth)
+      .then(async (result) => {
+        if (result?.user) {
+          console.log('[ANDROID AUTH] Redirect login successful for:', result.user.email);
+          const idToken = await result.user.getIdToken();
+          setToken(idToken);
+          await fetchDbUser(idToken);
+        }
+      })
+      .catch((err) => {
+        console.error('[ANDROID AUTH] Redirect result error code:', err?.code, 'message:', err?.message);
+      });
+
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       setUser(currentUser);
       if (currentUser) {
@@ -68,15 +81,47 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const signInWithGoogle = async () => {
     try {
       setLoading(true);
-      const res = await signInWithPopup(auth, googleAuthProvider);
-      if (res.user) {
-        const idToken = await res.user.getIdToken();
-        setToken(idToken);
-        await fetchDbUser(idToken);
+      const isCapacitor = typeof window !== 'undefined' && (
+        (window as any).Capacitor !== undefined ||
+        window.location.origin.startsWith('capacitor://') ||
+        window.location.origin.includes('localhost') ||
+        window.location.protocol === 'file:'
+      );
+
+      console.log('[ANDROID AUTH]', {
+        'Running inside Capacitor': isCapacitor,
+        'Auth method': isCapacitor ? 'signInWithRedirect' : 'signInWithPopup',
+        'Google provider': 'google.com',
+        'Redirect URL': window.location.href
+      });
+
+      if (isCapacitor) {
+        await signInWithRedirect(auth, googleAuthProvider);
+      } else {
+        try {
+          const res = await signInWithPopup(auth, googleAuthProvider);
+          if (res.user) {
+            const idToken = await res.user.getIdToken();
+            setToken(idToken);
+            await fetchDbUser(idToken);
+          }
+        } catch (popupErr: any) {
+          console.warn('[ANDROID AUTH] signInWithPopup failed, falling back to signInWithRedirect:', popupErr);
+          if (
+            popupErr?.code === 'auth/popup-blocked' ||
+            popupErr?.code === 'auth/operation-not-supported-in-this-environment' ||
+            popupErr?.code === 'auth/popup-closed-by-user' ||
+            popupErr?.code === 'auth/cancelled-popup-request'
+          ) {
+            await signInWithRedirect(auth, googleAuthProvider);
+          } else {
+            throw popupErr;
+          }
+        }
       }
     } catch (err: any) {
-      console.error('Sign in error:', err);
-      alert(`فشل تسجيل الدخول: ${err.message || err}`);
+      console.error('[ANDROID AUTH] Error code:', err?.code, 'Error message:', err?.message || err);
+      alert(`فشل تسجيل الدخول: ${err?.message || err}`);
     } finally {
       setLoading(false);
     }
