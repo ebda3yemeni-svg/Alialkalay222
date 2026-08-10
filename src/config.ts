@@ -5,21 +5,20 @@ const getApiBaseUrl = () => {
   }
 
   if (typeof window !== 'undefined') {
-    const isCapacitor =
-      (window as any).Capacitor !== undefined ||
-      window.location.origin.startsWith('capacitor://') ||
-      window.location.protocol === 'file:' ||
-      (window.location.origin.includes('localhost') && !window.location.port);
+    const isLocalDev =
+      (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') &&
+      window.location.port === '3000';
 
-    if (isCapacitor) {
-      return 'https://service-9582.ai.studio';
+    if (isLocalDev) {
+      return '';
     }
   }
 
-  return '';
+  return 'https://service-9582.ai.studio';
 };
 
 export const API_BASE_URL = getApiBaseUrl();
+
 
 
 
