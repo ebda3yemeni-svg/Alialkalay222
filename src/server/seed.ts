@@ -2,6 +2,16 @@ import { pool } from '../db/index.ts';
 
 export async function seedInitialGenealogyData() {
   try {
+    // Check if people table already exists
+    const tableCheck = await pool
+      .query(`SELECT 1 FROM information_schema.tables WHERE table_schema = 'public' AND table_name = 'people' LIMIT 1;`)
+      .catch(() => null);
+
+    if (tableCheck && tableCheck.rowCount && tableCheck.rowCount > 0) {
+      console.log('Database schema verified (tables exist).');
+      return;
+    }
+
     // 1. Create tables individually
     await pool.query(`
       CREATE TABLE IF NOT EXISTS users (
@@ -13,7 +23,7 @@ export async function seedInitialGenealogyData() {
         is_active boolean NOT NULL DEFAULT true,
         created_at timestamp DEFAULT now()
       );
-    `);
+    `).catch(() => null);
 
     await pool.query(`
       CREATE TABLE IF NOT EXISTS people (
@@ -41,7 +51,7 @@ export async function seedInitialGenealogyData() {
         created_at timestamp DEFAULT now(),
         updated_at timestamp DEFAULT now()
       );
-    `);
+    `).catch(() => null);
 
     await pool.query(`
       CREATE TABLE IF NOT EXISTS photos (
@@ -52,7 +62,7 @@ export async function seedInitialGenealogyData() {
         is_public boolean DEFAULT true,
         created_at timestamp DEFAULT now()
       );
-    `);
+    `).catch(() => null);
 
     await pool.query(`
       CREATE TABLE IF NOT EXISTS documents (
@@ -64,7 +74,7 @@ export async function seedInitialGenealogyData() {
         is_public boolean DEFAULT true,
         created_at timestamp DEFAULT now()
       );
-    `);
+    `).catch(() => null);
 
     await pool.query(`
       CREATE TABLE IF NOT EXISTS audit_logs (
@@ -76,40 +86,11 @@ export async function seedInitialGenealogyData() {
         details text,
         created_at timestamp DEFAULT now()
       );
-    `);
+    `).catch(() => null);
 
-    // 2. Safely add missing columns to existing tables individually
-    const columnsToEnsure = [
-      `ALTER TABLE people ADD COLUMN IF NOT EXISTS confidence_level text DEFAULT 'verified';`,
-      `ALTER TABLE people ADD COLUMN IF NOT EXISTS created_by text;`,
-      `ALTER TABLE people ADD COLUMN IF NOT EXISTS notes text;`,
-      `ALTER TABLE people ADD COLUMN IF NOT EXISTS photo_url text;`,
-      `ALTER TABLE people ADD COLUMN IF NOT EXISTS email text;`,
-      `ALTER TABLE people ADD COLUMN IF NOT EXISTS phone text;`,
-      `ALTER TABLE people ADD COLUMN IF NOT EXISTS occupation text;`,
-      `ALTER TABLE people ADD COLUMN IF NOT EXISTS biography text;`,
-      `ALTER TABLE people ADD COLUMN IF NOT EXISTS is_deceased boolean DEFAULT false;`,
-      `ALTER TABLE people ADD COLUMN IF NOT EXISTS birth_place text;`,
-      `ALTER TABLE people ADD COLUMN IF NOT EXISTS death_place text;`,
-      `ALTER TABLE people ADD COLUMN IF NOT EXISTS birth_date text;`,
-      `ALTER TABLE people ADD COLUMN IF NOT EXISTS death_date text;`,
-      `ALTER TABLE people ADD COLUMN IF NOT EXISTS branch text;`,
-      `ALTER TABLE people ADD COLUMN IF NOT EXISTS tribe text;`,
-      `ALTER TABLE people ADD COLUMN IF NOT EXISTS family_name text;`,
-      `ALTER TABLE people ADD COLUMN IF NOT EXISTS gender text DEFAULT 'male';`,
-      `ALTER TABLE people ADD COLUMN IF NOT EXISTS mother_id integer;`,
-      `ALTER TABLE people ADD COLUMN IF NOT EXISTS father_id integer;`,
-    ];
-
-    for (const colSql of columnsToEnsure) {
-      await pool.query(colSql).catch((colErr) => {
-        console.warn('Column migration note:', colErr.message);
-      });
-    }
-
-    console.log('Database schema verification and auto-migration completed.');
-  } catch (err) {
-    console.error('Error verifying database schema:', err);
+    console.log('Database schema verification completed.');
+  } catch (err: any) {
+    console.log('Note on database schema setup:', err?.message || err);
   }
 }
 

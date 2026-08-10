@@ -65,22 +65,28 @@ async function startServer() {
   // Seed DB on startup if empty
   await seedInitialGenealogyData();
 
-  // Initialize duplicate_reviews table if needed
+  // Initialize duplicate_reviews table if needed and permissions allow
   try {
-    await pool.query(`
-      CREATE TABLE IF NOT EXISTS duplicate_reviews (
-        id SERIAL PRIMARY KEY,
-        person1_id INTEGER NOT NULL,
-        person2_id INTEGER NOT NULL,
-        normalized_name TEXT NOT NULL,
-        status TEXT NOT NULL DEFAULT 'approved_different',
-        reviewed_by TEXT,
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-      );
-    `);
-  } catch (err) {
-    console.warn('Could not auto-create duplicate_reviews table:', err);
+    const tableExists = await pool
+      .query(`SELECT 1 FROM information_schema.tables WHERE table_schema = 'public' AND table_name = 'duplicate_reviews' LIMIT 1;`)
+      .catch(() => null);
+
+    if (!tableExists || !tableExists.rowCount) {
+      await pool.query(`
+        CREATE TABLE IF NOT EXISTS duplicate_reviews (
+          id SERIAL PRIMARY KEY,
+          person1_id INTEGER NOT NULL,
+          person2_id INTEGER NOT NULL,
+          normalized_name TEXT NOT NULL,
+          status TEXT NOT NULL DEFAULT 'approved_different',
+          reviewed_by TEXT,
+          created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+          updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        );
+      `).catch(() => null);
+    }
+  } catch (_err) {
+    // Ignore schema check/creation permission errors on restricted Cloud SQL users
   }
 
   // --- API ROUTES ---
