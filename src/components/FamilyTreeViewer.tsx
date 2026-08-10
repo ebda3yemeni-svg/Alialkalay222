@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { FamilyTreeNode } from '../types.ts';
-import { API_BASE_URL } from '../config.ts';
+import { API_BASE_URL, safeApiFetch } from '../config.ts';
 import { normalizeArabicText } from '../utils/search.ts';
 import {
   ZoomIn,
@@ -361,26 +361,14 @@ export const FamilyTreeViewer: React.FC<FamilyTreeViewerProps> = ({
   const fetchTree = async () => {
     try {
       setLoading(true);
-      const isCapacitor = typeof window !== 'undefined' && (
-        (window as any).Capacitor !== undefined ||
-        window.location.origin.startsWith('capacitor://') ||
-        window.location.origin.includes('localhost')
-      );
-      const requestUrl = `${API_BASE_URL}/api/tree`;
-      console.log('[ANDROID API]', {
-        'Running inside Capacitor': isCapacitor,
-        'API Base URL': API_BASE_URL,
-        'Request URL': requestUrl,
-        'Request method': 'GET'
-      });
-      const res = await fetch(requestUrl, {
+      const res = await safeApiFetch('/api/tree', {
         headers: {
           'Accept': 'application/json'
         }
       });
-      console.log('[ANDROID API] Response status:', res.status);
       if (!res.ok) throw new Error('فشل تحميل شجرة العائلة من الخادم');
-      const data = await res.json();
+      const text = await res.text();
+      const data = JSON.parse(text);
       setTreeData(data);
     } catch (err: any) {
       console.error('[ANDROID API] Response error:', err);

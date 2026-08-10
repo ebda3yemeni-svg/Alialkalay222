@@ -6,7 +6,7 @@ const config: CapacitorConfig = {
   webDir: 'dist',
   server: {
     androidScheme: 'https',
-    hostname: 'service-9582.ai.studio',
+    hostname: 'credible-descent-q98sv.firebaseapp.com',
     cleartext: true,
     allowNavigation: [
       'service-9582.ai.studio',

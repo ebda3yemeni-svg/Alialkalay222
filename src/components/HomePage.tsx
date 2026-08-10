@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Person, GenealogyStatistics } from '../types.ts';
 import { Search, TreePine, UserPlus, BarChart3, Info, Users, Sparkles, BookOpen, Layers, Award, ArrowLeft } from 'lucide-react';
 import { useAuth } from '../context/AuthContext.tsx';
-import { API_BASE_URL } from '../config.ts';
+import { API_BASE_URL, safeApiFetch } from '../config.ts';
 
 interface HomePageProps {
   setActiveTab: (tab: string) => void;
@@ -22,9 +22,9 @@ export const HomePage: React.FC<HomePageProps> = ({
   const [stats, setStats] = useState<GenealogyStatistics | null>(null);
 
   const loadStats = () => {
-    fetch(`${API_BASE_URL}/api/statistics`)
-      .then((res) => res.json())
-      .then((data) => setStats(data))
+    safeApiFetch('/api/statistics')
+      .then((res) => res.text())
+      .then((text) => setStats(JSON.parse(text)))
       .catch((err) => console.error('Failed to load stats:', err));
   };
 
