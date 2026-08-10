@@ -14,6 +14,8 @@ const config: CapacitorConfig = {
       '*.run.app',
       'credible-descent-q98sv.firebaseapp.com',
       '*.firebaseapp.com',
+      'credible-descent-q98sv.web.app',
+      '*.web.app',
       'accounts.google.com',
       '*.google.com'
     ]
