@@ -6,6 +6,7 @@ const config: CapacitorConfig = {
   webDir: 'dist',
   server: {
     androidScheme: 'https',
+    hostname: 'service-9582.ai.studio',
     cleartext: true,
     allowNavigation: [
       'service-9582.ai.studio',

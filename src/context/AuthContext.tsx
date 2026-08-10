@@ -48,14 +48,25 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     getRedirectResult(auth)
       .then(async (result) => {
         if (result?.user) {
-          console.log('[ANDROID AUTH] Redirect login successful for:', result.user.email);
+          console.log('[ANDROID AUTH SUCCESS]', {
+            email: result.user.email,
+            uid: result.user.uid,
+            providerId: result.providerId,
+          });
           const idToken = await result.user.getIdToken();
           setToken(idToken);
           await fetchDbUser(idToken);
+        } else {
+          console.log('[ANDROID AUTH DEBUG] getRedirectResult returned null (no pending redirect auth flow)');
         }
       })
       .catch((err) => {
-        console.error('[ANDROID AUTH] Redirect result error code:', err?.code, 'message:', err?.message);
+        console.error('[ANDROID AUTH REDIRECT ERROR]', {
+          code: err?.code,
+          message: err?.message,
+          customData: err?.customData,
+          name: err?.name,
+        });
       });
 
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
@@ -88,15 +99,35 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         window.location.protocol === 'file:'
       );
 
-      console.log('[ANDROID AUTH]', {
-        'Running inside Capacitor': isCapacitor,
-        'Auth method': isCapacitor ? 'signInWithRedirect' : 'signInWithPopup',
-        'Google provider': 'google.com',
-        'Redirect URL': window.location.href
+      console.log('[ANDROID AUTH START]', {
+        isCapacitor,
+        origin: typeof window !== 'undefined' ? window.location.origin : 'N/A',
+        href: typeof window !== 'undefined' ? window.location.href : 'N/A',
+        authDomain: auth.config.authDomain,
+        appName: auth.app.name,
       });
 
       if (isCapacitor) {
-        await signInWithRedirect(auth, googleAuthProvider);
+        // Try popup first or redirect based on WebView behavior
+        try {
+          console.log('[ANDROID AUTH] Attempting signInWithPopup on Capacitor...');
+          const res = await signInWithPopup(auth, googleAuthProvider);
+          if (res.user) {
+            console.log('[ANDROID AUTH POPUP SUCCESS]', { email: res.user.email, uid: res.user.uid });
+            const idToken = await res.user.getIdToken();
+            setToken(idToken);
+            await fetchDbUser(idToken);
+            return;
+          }
+        } catch (popupErr: any) {
+          console.warn('[ANDROID AUTH POPUP FAILED]', {
+            code: popupErr?.code,
+            message: popupErr?.message,
+            customData: popupErr?.customData,
+          });
+          console.log('[ANDROID AUTH] Falling back to signInWithRedirect...');
+          await signInWithRedirect(auth, googleAuthProvider);
+        }
       } else {
         try {
           const res = await signInWithPopup(auth, googleAuthProvider);
@@ -106,7 +137,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             await fetchDbUser(idToken);
           }
         } catch (popupErr: any) {
-          console.warn('[ANDROID AUTH] signInWithPopup failed, falling back to signInWithRedirect:', popupErr);
+          console.warn('[WEB AUTH POPUP FAILED]', {
+            code: popupErr?.code,
+            message: popupErr?.message,
+          });
           if (
             popupErr?.code === 'auth/popup-blocked' ||
             popupErr?.code === 'auth/operation-not-supported-in-this-environment' ||
@@ -120,8 +154,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         }
       }
     } catch (err: any) {
-      console.error('[ANDROID AUTH] Error code:', err?.code, 'Error message:', err?.message || err);
-      alert(`فشل تسجيل الدخول: ${err?.message || err}`);
+      console.error('[ANDROID AUTH ERROR]', {
+        code: err?.code,
+        message: err?.message,
+        customData: err?.customData,
+        fullError: err,
+      });
+      alert(`فشل تسجيل الدخول: ${err?.code ? `[${err.code}] ` : ''}${err?.message || err}`);
     } finally {
       setLoading(false);
     }
