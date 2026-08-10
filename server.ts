@@ -44,6 +44,7 @@ async function startServer() {
       'http://localhost:3000',
       'https://localhost:3000',
       'android-app://com.genealogy.app',
+      'android-app://com.mayar.app',
       'file://',
       'null',
     ];
@@ -62,6 +63,8 @@ async function startServer() {
       if (origin) {
         res.header('Access-Control-Allow-Origin', origin);
         res.header('Vary', 'Origin');
+      } else {
+        res.header('Access-Control-Allow-Origin', '*');
       }
 
       res.header('Access-Control-Allow-Credentials', 'true');
@@ -71,8 +74,9 @@ async function startServer() {
       );
       res.header(
         'Access-Control-Allow-Headers',
-        'Content-Type, Authorization, Accept'
+        'Content-Type, Authorization, Accept, X-Requested-With, Cache-Control, Pragma'
       );
+      res.header('Access-Control-Max-Age', '86400');
     }
 
     if (req.method === 'OPTIONS') {
