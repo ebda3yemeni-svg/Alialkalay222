@@ -27,6 +27,7 @@ workflows:
           npx cap sync android
       - name: Fix Kotlin Dependency Conflicts
         script: |
+          echo "" >> android/variables.gradle
           echo "ext.kotlinVersion = '1.8.22'" >> android/variables.gradle
           cat << 'EOF' >> android/build.gradle
 
