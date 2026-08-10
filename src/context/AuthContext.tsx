@@ -108,7 +108,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       });
 
       if (isCapacitor) {
-        // Try popup first or redirect based on WebView behavior
         try {
           console.log('[ANDROID AUTH] Attempting signInWithPopup on Capacitor...');
           const res = await signInWithPopup(auth, googleAuthProvider);
@@ -125,8 +124,17 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             message: popupErr?.message,
             customData: popupErr?.customData,
           });
-          console.log('[ANDROID AUTH] Falling back to signInWithRedirect...');
-          await signInWithRedirect(auth, googleAuthProvider);
+          if (
+            popupErr?.code === 'auth/popup-blocked' ||
+            popupErr?.code === 'auth/operation-not-supported-in-this-environment' ||
+            popupErr?.code === 'auth/popup-closed-by-user' ||
+            popupErr?.code === 'auth/cancelled-popup-request'
+          ) {
+            console.log('[ANDROID AUTH] Falling back to signInWithRedirect...');
+            await signInWithRedirect(auth, googleAuthProvider);
+          } else {
+            throw popupErr;
+          }
         }
       } else {
         try {
