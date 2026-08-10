@@ -41,14 +41,24 @@ async function startServer() {
       'https://localhost',
       'http://localhost',
       'capacitor://localhost',
+      'http://localhost:3000',
+      'https://localhost:3000',
+      'android-app://com.genealogy.app',
+      'file://',
+      'null',
     ];
 
-    if (
+    const isAllowedOrigin =
       !origin ||
       allowedOrigins.includes(origin) ||
+      origin.startsWith('http://localhost') ||
+      origin.startsWith('https://localhost') ||
+      origin.startsWith('capacitor://') ||
+      origin.startsWith('android-app://') ||
       origin.endsWith('.ai.studio') ||
-      origin.endsWith('.run.app')
-    ) {
+      origin.endsWith('.run.app');
+
+    if (isAllowedOrigin) {
       if (origin) {
         res.header('Access-Control-Allow-Origin', origin);
         res.header('Vary', 'Origin');
@@ -61,7 +71,7 @@ async function startServer() {
       );
       res.header(
         'Access-Control-Allow-Headers',
-        'Content-Type, Authorization'
+        'Content-Type, Authorization, Accept'
       );
     }
 

@@ -361,12 +361,29 @@ export const FamilyTreeViewer: React.FC<FamilyTreeViewerProps> = ({
   const fetchTree = async () => {
     try {
       setLoading(true);
-      const res = await fetch(`${API_BASE_URL}/api/tree`);
+      const isCapacitor = typeof window !== 'undefined' && (
+        (window as any).Capacitor !== undefined ||
+        window.location.origin.startsWith('capacitor://') ||
+        window.location.origin.includes('localhost')
+      );
+      const requestUrl = `${API_BASE_URL}/api/tree`;
+      console.log('[ANDROID API]', {
+        'Running inside Capacitor': isCapacitor,
+        'API Base URL': API_BASE_URL,
+        'Request URL': requestUrl,
+        'Request method': 'GET'
+      });
+      const res = await fetch(requestUrl, {
+        headers: {
+          'Accept': 'application/json'
+        }
+      });
+      console.log('[ANDROID API] Response status:', res.status);
       if (!res.ok) throw new Error('فشل تحميل شجرة العائلة من الخادم');
       const data = await res.json();
       setTreeData(data);
     } catch (err: any) {
-      console.error(err);
+      console.error('[ANDROID API] Response error:', err);
       setError(err.message || 'خطأ أثناء جلب بيانات الشجرة');
     } finally {
       setLoading(false);
