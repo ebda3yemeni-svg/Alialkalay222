@@ -3,8 +3,18 @@ const getApiBaseUrl = () => {
   if (envUrl && typeof envUrl === 'string' && envUrl.trim() !== '') {
     return envUrl.trim().replace(/\/+$/, '');
   }
-  return 'https://service-9582.ai.studio';
+  if (
+    typeof window !== 'undefined' &&
+    (window.location.origin.includes('localhost') ||
+      window.location.origin.startsWith('capacitor://') ||
+      window.location.protocol === 'file:' ||
+      (window as any).Capacitor !== undefined)
+  ) {
+    return 'https://service-9582.ai.studio';
+  }
+  return '';
 };
 
 export const API_BASE_URL = getApiBaseUrl();
+
 
