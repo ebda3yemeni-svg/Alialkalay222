@@ -11,7 +11,10 @@ workflows:
     scripts:
       - name: Install dependencies
         script: |
+          rm -rf node_modules package-lock.json
           npm install
+          node -e "try { require.resolve('@rollup/rollup-darwin-arm64') } catch (e) { require('child_process').execSync('npm install --os=darwin --cpu=arm64 @rollup/rollup-darwin-arm64', { stdio: 'inherit' }) }"
+          node -e "require.resolve('@rollup/rollup-darwin-arm64')"
       - name: Build Web Assets
         script: |
           npm run build
