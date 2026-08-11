@@ -65,10 +65,10 @@ workflows:
           export PATH="$JAVA_HOME/bin:$PATH"
           java -version
           javac -version
-          if [ ! -f "android/gradle/wrapper/gradle-wrapper.jar" ] || ! unzip -t android/gradle/wrapper/gradle-wrapper.jar >/dev/null 2>&1; then
+          if [ ! -f "android/gradle/wrapper/gradle-wrapper.jar" ] || ! unzip -p android/gradle/wrapper/gradle-wrapper.jar META-INF/MANIFEST.MF 2>/dev/null | grep -q "GradleWrapperMain"; then
             echo "gradle-wrapper.jar is missing or invalid. Downloading valid Gradle Wrapper JAR..."
             mkdir -p android/gradle/wrapper
-            curl -sSL -o android/gradle/wrapper/gradle-wrapper.jar https://raw.githubusercontent.com/gradle/gradle/v8.12.0/gradle/wrapper/gradle-wrapper.jar
+            curl -sSL -o android/gradle/wrapper/gradle-wrapper.jar https://raw.githubusercontent.com/gradle/gradle/master/gradle/wrapper/gradle-wrapper.jar
           fi
           cd android
           chmod +x gradlew
@@ -77,13 +77,21 @@ workflows:
         script: |
           export JAVA_HOME=$(/usr/libexec/java_home -v 21)
           export PATH="$JAVA_HOME/bin:$PATH"
-          if [ ! -f "android/gradle/wrapper/gradle-wrapper.jar" ] || ! unzip -t android/gradle/wrapper/gradle-wrapper.jar >/dev/null 2>&1; then
+          if [ ! -f "android/gradle/wrapper/gradle-wrapper.jar" ] || ! unzip -p android/gradle/wrapper/gradle-wrapper.jar META-INF/MANIFEST.MF 2>/dev/null | grep -q "GradleWrapperMain"; then
             echo "gradle-wrapper.jar is missing or invalid. Downloading valid Gradle Wrapper JAR..."
             mkdir -p android/gradle/wrapper
-            curl -sSL -o android/gradle/wrapper/gradle-wrapper.jar https://raw.githubusercontent.com/gradle/gradle/v8.12.0/gradle/wrapper/gradle-wrapper.jar
+            curl -sSL -o android/gradle/wrapper/gradle-wrapper.jar https://raw.githubusercontent.com/gradle/gradle/master/gradle/wrapper/gradle-wrapper.jar
           fi
           cd android
           chmod +x gradlew
+          if [ ! -f ~/.android/debug.keystore ]; then
+            echo "Generating debug keystore for fingerprint extraction..."
+            mkdir -p ~/.android
+            keytool -genkey -v -keystore ~/.android/debug.keystore -storepass android -alias androiddebugkey -keypass android -keyalg RSA -keysize 2048 -validity 10000 -dname "CN=Android Debug,O=Android,C=US"
+          fi
+          echo "=== CODEMAGIC DEBUG KEYSTORE FINGERPRINTS ==="
+          keytool -list -v -keystore ~/.android/debug.keystore -alias androiddebugkey -storepass android -keypass android | grep -E "SHA1:|SHA256:" || true
+          echo "============================================="
           ./gradlew assembleDebug
     artifacts:
       - android/app/build/outputs/**/*.apk
