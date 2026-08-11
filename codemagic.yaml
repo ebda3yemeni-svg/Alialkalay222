@@ -33,9 +33,12 @@ workflows:
           ./node_modules/.bin/cap sync android
       - name: Fix Kotlin Dependency Conflicts
         script: |
-          echo "" >> android/variables.gradle
-          echo "ext.kotlinVersion = '1.8.22'" >> android/variables.gradle
-          cat << 'EOF' >> android/build.gradle
+          if ! grep -q "kotlinVersion" android/variables.gradle; then
+            echo "" >> android/variables.gradle
+            echo "ext.kotlinVersion = '1.8.22'" >> android/variables.gradle
+          fi
+          if ! grep -q "kotlin-stdlib:1.8.22" android/build.gradle; then
+            cat << 'EOF' >> android/build.gradle
 
           allprojects {
               configurations.all {
@@ -55,6 +58,7 @@ workflows:
               }
           }
           EOF
+          fi
       - name: Verify Java and Gradle Environment
         script: |
           export JAVA_HOME=$(/usr/libexec/java_home -v 21)
