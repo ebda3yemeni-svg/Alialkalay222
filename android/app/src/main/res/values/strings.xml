@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
-    <string name="app_name">Genealogy App</string>
-    <string name="title_activity_main">Genealogy App</string>
+    <string name="app_name">موقع أنساب بني علي الكلعي</string>
+    <string name="title_activity_main">موقع أنساب بني علي الكلعي</string>
     <string name="package_name">com.mayar.app</string>
     <string name="custom_url_scheme">com.mayar.app</string>
 </resources>

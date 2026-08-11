@@ -3,6 +3,7 @@ import { Person, GenealogyStatistics } from '../types.ts';
 import { Search, TreePine, UserPlus, BarChart3, Info, Users, Sparkles, BookOpen, Layers, Award, ArrowLeft } from 'lucide-react';
 import { useAuth } from '../context/AuthContext.tsx';
 import { API_BASE_URL, safeApiFetch } from '../config.ts';
+import { VoiceSearchButton } from './VoiceSearchButton.tsx';
 
 interface HomePageProps {
   setActiveTab: (tab: string) => void;
@@ -91,15 +92,18 @@ export const HomePage: React.FC<HomePageProps> = ({
 
           {/* Quick Search Box */}
           <div className="relative max-w-2xl mx-auto pt-4">
-            <div className="relative flex items-center">
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="ابحث عن اسم، لقب، أو قبيلة..."
-                className="w-full py-4 pr-12 pl-4 text-base sm:text-lg bg-[#243B55]/90 text-white placeholder-gray-400 rounded-xl border-2 border-[#C5A059]/50 focus:border-[#C5A059] focus:outline-none focus:ring-4 focus:ring-[#C5A059]/20 shadow-xl backdrop-blur-md transition-all"
-              />
-              <Search className="absolute right-4 w-6 h-6 text-[#C5A059]" />
+            <div className="relative flex items-center gap-2">
+              <div className="relative flex-1">
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="ابحث عن اسم، لقب، أو قبيلة..."
+                  className="w-full py-4 pr-12 pl-4 text-base sm:text-lg bg-[#243B55]/90 text-white placeholder-gray-400 rounded-xl border-2 border-[#C5A059]/50 focus:border-[#C5A059] focus:outline-none focus:ring-4 focus:ring-[#C5A059]/20 shadow-xl backdrop-blur-md transition-all"
+                />
+                <Search className="absolute right-4 top-4 w-6 h-6 text-[#C5A059]" />
+              </div>
+              <VoiceSearchButton onSpeechResult={(res) => setSearchQuery(res)} />
             </div>
 
             {/* Instant Search Suggestions Dropdown */}

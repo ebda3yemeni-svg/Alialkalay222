@@ -2,11 +2,11 @@ import type { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
   appId: 'com.mayar.app',
-  appName: 'Genealogy App',
+  appName: 'موقع أنساب بني علي الكلعي',
   webDir: 'dist',
   server: {
     androidScheme: 'https',
-    hostname: 'credible-descent-q98sv.firebaseapp.com',
+    hostname: 'localhost',
     cleartext: true,
     allowNavigation: [
       'service-9582.ai.studio',

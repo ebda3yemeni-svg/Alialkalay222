@@ -57,14 +57,16 @@ export const VoiceSearchButton: React.FC<VoiceSearchButtonProps> = ({
       recognition.onerror = (event: any) => {
         console.error('Speech recognition error:', event.error);
         setIsListening(false);
-        if (event.error === 'not-allowed') {
-          setErrorMessage('يرجى السماح بصلاحية استخدام الميكروفون للبحث الصوتي');
+        if (event.error === 'not-allowed' || event.error === 'permission-denied') {
+          setErrorMessage('تم رفض صلاحية الميكروفون. يُرجى التوجه إلى إعدادات الهاتف > التطبيقات > تفعيل إذن الميكروفون لاستخدام البحث الصوتي');
         } else if (event.error === 'no-speech') {
-          setErrorMessage('لم يتم التعرّف على صوت، حاول التحدث مرة أخرى');
+          setErrorMessage('لم يتم التعرّف على صوت، يُرجى التحدث بوضوح وإعادة المحاولة');
+        } else if (event.error === 'network') {
+          setErrorMessage('حدث خطأ في الاتصال بالشبكة للتعرّف الصوتي');
         } else {
-          setErrorMessage('حدث خطأ في التعرّف الصوتي');
+          setErrorMessage('يلزم السماح بإذن الميكروفون في إعدادات الجهاز لاستخدام البحث الصوتي');
         }
-        setTimeout(() => setErrorMessage(null), 4000);
+        setTimeout(() => setErrorMessage(null), 6000);
       };
 
       recognition.onend = () => {
