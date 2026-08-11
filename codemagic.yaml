@@ -6,7 +6,7 @@ workflows:
     environment:
       vars:
         VITE_API_BASE_URL: "https://service-9582.ai.studio"
-      node: 20
+      node: 22
       java: 21
     scripts:
       - name: Install dependencies
@@ -20,12 +20,17 @@ workflows:
           npm run build
       - name: Setup Capacitor & Android Platform
         script: |
-          npm install
-          npx cap --version
+          which node
+          node --version
+          npm --version
+          which npx
+          npx --version
+          npm ls @capacitor/cli @capacitor/core @capacitor/android --depth=0 || true
+          ./node_modules/.bin/cap --version
           if [ ! -d "android" ]; then
-            npx cap add android
+            ./node_modules/.bin/cap add android
           fi
-          npx cap sync android
+          ./node_modules/.bin/cap sync android
       - name: Fix Kotlin Dependency Conflicts
         script: |
           echo "" >> android/variables.gradle
