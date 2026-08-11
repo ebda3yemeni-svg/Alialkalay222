@@ -1334,10 +1334,10 @@ var firebase_applet_config_default = {
   appId: "1:520164409194:web:94ff0d2e590f7460266f13",
   apiKey: "AIzaSyDA2AcMVuQfSsbfwUoPoSwEEcvRdlQLDD8",
   authDomain: "credible-descent-q98sv.firebaseapp.com",
+  firestoreDatabaseId: "ai-studio-159079a3-ee8a-4de6-a732-199103495f58",
   storageBucket: "credible-descent-q98sv.firebasestorage.app",
   messagingSenderId: "520164409194",
   measurementId: "",
-  oAuthClientId: "520164409194-9jnto71emfh5ejdrf851vpl4qp9fihlj.apps.googleusercontent.com",
   recaptchaSiteKey: ""
 };
 
